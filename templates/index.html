@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Titanic Survival Predictor</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .info-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 12px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: gray;
+            font-weight: normal;
+        }
+
+        input, select {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #2a5298;
+        }
+
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            opacity: 0.95;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f2ff;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result h2 {
+            margin: 0 0 10px 0;
+            color: #1e3c72;
+        }
+
+        .confidence {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .survived {
+            background-color: #28a745;
+        }
+
+        .not-survived {
+            background-color: #dc3545;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            line-height: 20px;
+            color: white;
+            text-align: center;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .progress-green {
+            background-color: #28a745;
+        }
+
+        .progress-red {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Titanic Survival Predictor</h1>
+        <p class="subtitle">Enter passenger details to predict survival</p>
+
+        <div class="info-box">
+            💡 This predictor uses a Random Forest model trained on historical Titanic passenger data.
+        </div>
+
+        <form action="/predict" method="POST">
+            
+            <label for="pclass">
+                Ticket Class <span class="hint">(Passenger's ticket category)</span>
+            </label>
+            <select name="pclass" id="pclass">
+                <option value="1">1st Class</option>
+                <option value="2">2nd Class</option>
+                <option value="3" selected>3rd Class</option>
+            </select>
+
+            <label for="sex">
+                Gender <span class="hint">(0 = Male, 1 = Female)</span>
+            </label>
+            <select name="sex" id="sex">
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+            </select>
+
+            <label for="age">
+                Age <span class="hint">(Passenger age in years)</span>
+            </label>
+            <input type="number" name="age" id="age" min="0" max="100" value="25" required>
+
+            <label for="sibsp">
+                Siblings/Spouses Aboard <span class="hint">(Number of siblings or spouse on board)</span>
+            </label>
+            <input type="number" name="sibsp" id="sibsp" min="0" max="10" value="0" required>
+
+            <label for="parch">
+                Parents/Children Aboard <span class="hint">(Number of parents or children on board)</span>
+            </label>
+            <input type="number" name="parch" id="parch" min="0" max="10" value="0" required>
+
+            <label for="fare">
+                Ticket Fare <span class="hint">(Fare paid in British Pounds)</span>
+            </label>
+            <input type="number" name="fare" id="fare" min="0" max="600" step="0.01" value="32.00" required>
+
+            <button type="submit" class="submit-btn">🔮 Predict Survival</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+
+            {% if "survive" in result.lower() %}
+                <div class="badge survived">
+                    ✅ Likely to Survive
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar progress-green"
+                        style="width: {{ confidence }}%;">
+                        {{ confidence }}%
+                    </div>
+                </div>
+            {% else %}
+                <div class="badge not-survived">
+                    ❌ Likely Not to Survive
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar progress-red"
+                        style="width: {{ confidence }}%;">
+                        {{ confidence }}%
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>

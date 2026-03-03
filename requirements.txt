@@ -1,0 +1,12 @@
+# the following are the packages required to in the project
+# you can install them using pip by running:
+#       pip install -r requirements.txt
+
+
+flask
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+joblib

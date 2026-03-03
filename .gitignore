@@ -1,0 +1,64 @@
+# =========================
+# Python cache files
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Virtual environments
+# =========================
+venv/
+env/
+flaskapp/
+.venv/
+
+# =========================
+# Environment variables
+# =========================
+.env
+
+# =========================
+# Flask files
+# =========================
+instance/
+.webassets-cache
+
+# =========================
+# Model & large data files
+# (optional — remove if you want to upload model)
+# =========================
+*.pkl
+*.joblib
+*.h5
+*.csv
+
+# =========================
+# IDE / Editor settings
+# =========================
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Jupyter Notebook checkpoints
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Build / distribution
+# =========================
+build/
+dist/
+*.egg-info/
